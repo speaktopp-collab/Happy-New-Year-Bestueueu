@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Rijul ❤️</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+html { scroll-behavior: smooth; }
+
+/* Floating background */
+.floating {
+  position: fixed;
+  bottom: -50px;
+  animation: floatUp linear infinite;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  to { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* Listening animation */
+.listening {
+  margin-top: 20px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* Gallery */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.gallery img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.gallery img:hover {
+  transform: scale(1.05);
+}
+
+/* Lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 14px;
+}
+
+.lb-btn {
+  position: absolute;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+}
+.lb-close { top: 20px; right: 30px; }
+.lb-prev { left: 20px; }
+.lb-next { right: 20px; }
+</style>
+</head>
+
+<body class="cinema">
+
+<!-- FLOATING BACKGROUND -->
+<script>
+function floatEmoji(e) {
+  const el = document.createElement("div");
+  el.className = "floating";
+  el.innerText = e;
+  el.style.left = Math.random() * 100 + "vw";
+  el.style.fontSize = (20 + Math.random() * 20) + "px";
+  el.style.animationDuration = (8 + Math.random() * 6) + "s";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 15000);
+}
+setInterval(() => floatEmoji("🎈"), 1200);
+setInterval(() => floatEmoji("💖"), 1600);
+</script>
+
+<!-- ================= INTRO ================= -->
+<section class="center-screen">
+
+<div class="overlay"></div>
+
+<div id="countdown">
+  <h1 class="cinema-text">Just wait…</h1>
+  <p id="timer">5</p>
+</div>
+
+<div id="celebration" class="hidden">
+  <div class="blast">💥</div>
+
+  <h1 class="fade-in">Happy New Year, Rijul</h1>
+
+  <p class="note fade-in">
+    This year wasn’t perfect.  
+    We weren’t perfect.  
+    But the memories were real.  
+    And they mattered.  
+    Always. ❤️
+  </p>
+
+  <audio id="voice" src="audio/voice.mp3"></audio>
+
+  <div id="listeningText" class="listening" style="display:none;">
+    🎧 Listening…
+  </div>
+
+  <a href="#memories" id="memBtn" class="btn fade-in" style="display:none;">
+    Enter Memories
+  </a>
+</div>
+
+</section>
+
+<!-- ================= MEMORIES ================= -->
+<section id="memories" style="background:black;padding:40px;">
+
+<h1>📸 Our Memories</h1>
+<p>Some friendships don’t end — they stay as memories.</p>
+
+<div class="gallery" id="gallery"></div>
+
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lb-btn lb-close" onclick="closeLB()">×</span>
+  <span class="lb-btn lb-prev" onclick="prevLB()">‹</span>
+  <img id="lbImg">
+  <span class="lb-btn lb-next" onclick="nextLB()">›</span>
+</div>
+
+<script>
+/* Countdown + voice */
+const timer = document.getElementById("timer");
+const countdown = document.getElementById("countdown");
+const celebration = document.getElementById("celebration");
+const voice = document.getElementById("voice");
+const listeningText = document.getElementById("listeningText");
+const memBtn = document.getElementById("memBtn");
+
+let time = 5;
+window.onload = () => {
+  const t = setInterval(() => {
+    time--;
+    timer.innerHTML = time;
+    if (time === 0) {
+      clearInterval(t);
+      countdown.style.display = "none";
+      celebration.classList.remove("hidden");
+      voice.play().catch(()=>{});
+      listeningText.style.display = "block";
+      voice.onended = () => {
+        listeningText.style.display = "none";
+        memBtn.style.display = "inline-block";
+      };
+    }
+  }, 1000);
+};
+
+/* Load 29 images */
+const gallery = document.getElementById("gallery");
+let imgs = [];
+for (let i = 1; i <= 29; i++) {
+  const img = document.createElement("img");
+  img.src = `images/${i}.jpg`;
+  img.onclick = () => openLB(i-1);
+  gallery.appendChild(img);
+  imgs.push(img.src);
+}
+
+/* Lightbox logic */
+let current = 0;
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+
+function openLB(i) {
+  current = i;
+  lbImg.src = imgs[current];
+  lightbox.style.display = "flex";
+}
+function closeLB() {
+  lightbox.style.display = "none";
+}
+function nextLB() {
+  current = (current + 1) % imgs.length;
+  lbImg.src = imgs[current];
+}
+function prevLB() {
+  current = (current - 1 + imgs.length) % imgs.length;
+  lbImg.src = imgs[current];
+}
+</script>
+
+</body>
+</html>
